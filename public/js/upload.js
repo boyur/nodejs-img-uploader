@@ -34,6 +34,13 @@ dropBox.bind({
   }
 });
 
+// Обновление progress bar'а
+function updateProgress(bar, value) {
+  var width = bar.width();
+  var bgrValue = -width + (value * (width / 100));
+  bar.attr('rel', value).css('background-position', bgrValue+'px center').text(value+'%');
+}
+
 
   function displayFiles(files) {
   $.each(files, function(i, file) {
