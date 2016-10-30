@@ -23,7 +23,7 @@ router.post('/upload/', (req, res) => {
   var files = [];
   var fields = [];
 
-  form.maxFieldsSize = 10 * 1024 * 1024;
+  form.maxFieldsSize = 8 * 1024 * 1024;
   form.multiples = true;
   //form.uploadDir = '/upload';
   form
@@ -51,32 +51,6 @@ router.post('/upload/', (req, res) => {
     });
   form.parse(req);
 
-
-  // form.parse(req, function(err, fields, files) {
-  //   res.writeHead(200, {'content-type': 'text/plain'});
-  //   res.write('received upload:\n\n');
-  //
-  //   console.log(fields);
-  //
-  //   res.end(util.inspect({fields: fields, files: files}));
-  // });
-
-  // form.parse(req, function(err, fields, files) {
-  //
-  //   console.log("Парсим");
-  //
-  //   if (err) {
-  //     console.log("Ошибка");
-  //     return res.send(JSON.stringify({error: err.message || err}))
-  //   }
-  //
-  //   console.log(fields);
-  //   console.log(files);
-  // });
-
 });
-
-  //res.send(JSON.stringify({message: 'Фаил загружен'}));
-
 
 module.exports = router;
