@@ -55,11 +55,50 @@ dropBox.bind({
     reader.onload = (function(aImg) {
       return function(e) {
         aImg.attr('src', e.target.result);
-        aImg.attr('width', 150);
+        aImg.attr('width', 100);
         /* ... обновляем инфу о выбранных файлах ... */
       };
     })(img);
 
     reader.readAsDataURL(file);
   });
+}
+
+// Обаботка события нажатия на кнопку "Загрузить". Проходим по всем миниатюрам из списка,
+// читаем у каждой свойство file (добавленное при создании) и начинаем загрузку, создавая
+// экземпляры объекта uploaderObject. По мере загрузки, обновляем показания progress bar,
+// через обработчик onprogress, по завершении выводим информацию
+$("#upload").click(function() {
+
+  imgList.find('li').each(function() {
+
+    var uploadItem = this;
+    var pBar = $(uploadItem).find('.progress');
+    console.log('Начинаем загрузку `'+uploadItem.file.name+'`...');
+
+    new uploaderObject({
+      file:       uploadItem.file,
+      url:        '/upload/',
+      fieldName:  'my-pic',
+
+      onprogress: function(percents) {
+        updateProgress(pBar, percents);
+      },
+
+      oncomplete: function(done, data) {
+        if(done) {
+          updateProgress(pBar, 100);
+          console.log('Файл `'+uploadItem.file.name+'` загружен, полученные данные:<br/>*****<br/>'+data+'<br/>*****');
+        } else {
+          console.log('Ошибка при загрузке файла `'+uploadItem.file.name+'`:<br/>'+this.lastError.text);
+        }
+      }
+    });
+  });
+});
+
+
+// Проверка поддержки File API в браузере
+if(window.FileReader == null) {
+  log('Ваш браузер не поддерживает File API!');
 }
