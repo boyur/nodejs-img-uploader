@@ -20,9 +20,16 @@ html
         height: 100%;
       }
 
+      #img-container {
+        width: 300px;
+        height: 200px;
+        background: gray;
+      }
+
   body
-    h1 Drag something onto this page
-    div.upload
+    div
+      input#file-field(type='file', name='file', multiple='true')
+    #img-container
+      ul#img-list
     script(src='./js/jquery-3.1.1.min.js')
-    script(src='./js/dragdrop.min.js')
     script(src='./js/upload.js')
