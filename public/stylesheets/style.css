@@ -12,3 +12,8 @@ a {
   height: 200px;
   background: gray;
 }
+
+.upload img {
+  width: 100%;
+  height: 100%;
+}
