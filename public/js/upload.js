@@ -4,6 +4,6 @@ window.remove = DragDrop('.upload', {
     window.files = files;
     console.log('onDrop', files);
 
-    $('.upload').append('<img id="theImg" src="' + files[0].fullPath +'" />');
+    $('.upload').append('<img id="theImg" src="images/no_photo.jpg" />');
   }
 });
