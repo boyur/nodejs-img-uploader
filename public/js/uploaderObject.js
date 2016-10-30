@@ -81,12 +81,12 @@ var uploaderObject = function(params) {
         self.xhr.open("POST", params.url);
 
         var boundary = "xxxxxxxxx";
-        self.xhr.setRequestHeader("Content-Type", "multipart/form-data, boundary="+boundary);
+        self.xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary="+boundary);
         self.xhr.setRequestHeader("Cache-Control", "no-cache");
 
         var body = "--" + boundary + "\r\n";
         body += "Content-Disposition: form-data; name='"+(params.fieldName || 'file')+"'; filename='" + params.file.name + "'\r\n";
-        body += "Content-Type: image/png\r\n\r\n";
+        body += "Content-Type: application/octet-stream\r\n\r\n";
         body += self.reader.result + "\r\n";
         body += "--" + boundary + "--";
 

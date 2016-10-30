@@ -1,7 +1,7 @@
 'use strict';
 let fs         = require('fs');
 let path       = require('path');
-let formidable = require('formidable');
+let multiparty = require('multiparty');
 let util       = require('util');
 let express = require('express');
 let router = express.Router();
@@ -12,44 +12,85 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/upload/', (req, res) => {
-  //let form = new multiparty.Form();
-  console.log("Пришел запрос с картинкой");
-  //console.log(req.methods);
-  //console.log(req.headers);
-  //console.log(req.url);
+  var count = 0;
+  var form = new multiparty.Form();
 
-  var form = new formidable.IncomingForm();
-  //var file = new formidable.File();
-  var files = [];
-  var fields = [];
+// Errors may be emitted
+// Note that if you are listening to 'part' events, the same error may be
+// emitted from the `form` and the `part`.
+  form.on('error', function(err) {
+    console.log('Error parsing form: ' + err.stack);
+  });
 
-  form.maxFieldsSize = 10 * 1024 * 1024;
-  form.multiples = true;
-  //form.uploadDir = '/upload';
-  form
-    .on('field', function(name, field) {
-      console.log(name, field);
+// Parts are emitted when parsing the form
+  form.on('part', function(part) {
+    // You *must* act on the part by reading it
+    // NOTE: if you want to ignore it, just call "part.resume()"
 
-      fs.writeFile('../upload/myfile.jpg', field, 'binary', function(err){
-        if (err) throw err;
-        console.log('File saved.');
-      });
+    if (!part.filename) {
+      // filename is not defined when this is a field and not a file
+      console.log('got field named ');
+      console.log(part.headers);
+      // ignore field's content
+      part.resume();
+    }
 
-      fields.push([name, field]);
-    })
-    .on('file', function(field, file) {
-      console.log('FILE!!!');
-      console.log(field, file);
-      files.push([field, file]);
-    })
-    .on('end', function() {
-      console.log('-> upload done');
-      res.writeHead(200, {'content-type': 'text/plain'});
-      //res.write('received fields:\n\n '+util.inspect(fields));
-      res.write('\n\n');
-      res.end('received files:\n\n '+util.inspect(files));
+    if (part.filename) {
+      // filename is defined when this is a file
+      count++;
+      console.log('got file named ' + part.name);
+      // ignore file's content here
+      part.resume();
+    }
+
+    part.on('error', function(err) {
+      // decide what to do
     });
+  });
+
+// Close emitted after form parsed
+  form.on('close', function() {
+    console.log('Upload completed!');
+    //res.setHeader('text/plain');
+    res.end('Received ' + count + ' files');
+  });
+
+// Parse req
   form.parse(req);
+
+
+  // var form = new multiparty.Form();
+  // //var file = new formidable.File();
+  // var files = [];
+  // var fields = [];
+  //
+  // form.maxFieldsSize = 10 * 1024 * 1024;
+  // form.multiples = true;
+  // //form.uploadDir = '/upload';
+  // form
+  //   .on('field', function(name, field) {
+  //     console.log(name, field);
+  //
+  //     fs.writeFile('../upload/myfile.jpg', field, 'binary', function(err){
+  //       if (err) throw err;
+  //       console.log('File saved.');
+  //     });
+  //
+  //     fields.push([name, field]);
+  //   })
+  //   .on('file', function(field, file) {
+  //     console.log('FILE!!!');
+  //     console.log(field, file);
+  //     files.push([field, file]);
+  //   })
+  //   .on('end', function() {
+  //     console.log('-> upload done');
+  //     res.writeHead(200, {'content-type': 'text/plain'});
+  //     //res.write('received fields:\n\n '+util.inspect(fields));
+  //     res.write('\n\n');
+  //     res.end('received files:\n\n '+util.inspect(files));
+  //   });
+  // form.parse(req);
 
 
   // form.parse(req, function(err, fields, files) {
